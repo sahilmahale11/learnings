@@ -1,0 +1,26 @@
+node
+{
+   //Mention the tools which have been configured
+   
+   def mavenhome= tool name:"maven_home"
+   
+      //get source code from github 
+   
+   stage('checkout code'){
+       git branch: 'master', url: 'https://github.com/sahilmahale11/hello-world-demo1.git'
+   }
+
+   //Building the code in to packages by using maven 
+    
+   stage('build'){ 
+       sh "${mavenhome}/bin/mvn clean compile package"
+       
+  
+   }
+   
+   stage('tomcat'){
+       sshagent(credentials: ['ubuntu_master']) {
+       sh "scp -o  StrictHostKeyChecking=no /var/lib/jenkins/workspace/demo_pipeline2/webapp/target/webapp.war ubuntu@44.212.7.33:/opt/tomcat/webapps/"
+}
+}
+}
